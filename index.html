@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Fair Play Initiative</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+<style>
+:root {
+  --bg:#0b0b0d;
+  --card:#151518;
+  --muted:#a0a0a0;
+  --text:#f1f1f1;
+  --border:rgba(255,255,255,0.1);
+  --accent:#fff;
+}
+:root.light {
+  --bg:#f7f7f7;
+  --card:#ffffff;
+  --muted:#444;
+  --text:#0b0b0d;
+  --border:rgba(0,0,0,0.15);
+  --accent:#000;
+}
+#articleView a {
+  color: var(--accent);
+  text-decoration: underline;
+  transition: opacity .3s;
+}
+#articleView a:hover {
+  opacity: .7;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:Inter,system-ui,Segoe UI,Roboto,-apple-system,"Helvetica Neue",Arial;
+  background:var(--bg);
+  color:var(--text);
+  transition:background .4s ease,color .4s ease;
+  -webkit-font-smoothing:antialiased;
+}
+::selection {
+  background:var(--accent);
+  color:var(--bg);
+}
+.header {
+  position:fixed;
+  left:0;right:0;top:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  transition: opacity .3s;
+}
+#logo {
+  height:44px;
+  pointer-events:auto;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.home-toggle {
+  position:fixed;
+  top:14px;
+  left:18px;
+  z-index:60;
+  pointer-events:auto;
+  user-select: none;
+  -webkit-user-select: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .3s, visibility .3s;
+}
+.theme-toggle {
+  position:fixed;
+  top:14px;
+  right:18px;
+  z-index:60;
+  pointer-events:auto;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.home-toggle.visible {
+  opacity: 1;
+  visibility: visible;
+}
+.button-wrap {
+  position:relative;
+  z-index:2;
+  border-radius:12px;
+  background:transparent;
+  pointer-events:auto;
+  transition:all 400ms cubic-bezier(0.25,1,0.5,1);
+}
+.button-shadow {
+  position:absolute;
+  width:100%;height:100%;
+  filter:blur(10px);
+  pointer-events:none;
+  z-index:-1;
+  transform: translateY(3px) scale(1.02);
+}
+.button-shadow::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:12px;
+  background:linear-gradient(180deg,rgba(0, 0, 0, 0),rgba(0, 0, 0, 0));
+  transition:all 400ms cubic-bezier(0.25,1,0.5,1);
+}
+button.theme-btn {
+  all:unset;
+  cursor:pointer;
+  position:relative;
+  border-radius:12px;
+  background:linear-gradient(-75deg,rgba(255,255,255,0.03),rgba(255,255,255,0.1),rgba(255,255,255,0.03));
+  backdrop-filter:blur(6px);
+  box-shadow:inset 0 0.125em 0.125em rgba(0,0,0,0.05),
+    inset 0 -0.125em 0.125em rgba(255,255,255,0.2),
+    0 0.25em 0.125em -0.125em rgba(0,0,0,0.2);
+  width:48px;
+  height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all 400ms cubic-bezier(0.25,1,0.5,1);
+}
+.light button.theme-btn {
+  box-shadow:inset 0 0.125em 0.125em rgba(0,0,0,0.1),
+    inset 0 -0.125em 0.125em rgba(255,255,255,0.8),
+    0 0.25em 0.125em -0.125em rgba(0,0,0,0.15);
+}
+button.theme-btn:hover {
+  transform:scale(0.975);
+  box-shadow:inset 0 0.125em 0.125em rgba(0,0,0,0.05),
+    inset 0 -0.125em 0.125em rgba(255,255,255,0.2),
+    0 0.15em 0.05em -0.1em rgba(0,0,0,0.25);
+}
+.light button.theme-btn:hover {
+  box-shadow:inset 0 0.125em 0.125em rgba(0,0,0,0.1),
+    inset 0 -0.125em 0.125em rgba(255,255,255,0.8),
+    0 0.15em 0.05em -0.1em rgba(0,0,0,0.15);
+}
+button.theme-btn span {
+  color:#fff;
+  font-size:26px;
+  transition:color .3s ease;
+}
+.light button.theme-btn span { color:#000; }
+.container {
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:96px 20px 48px;
+  transition: opacity .3s;
+}
+.hidden-content {
+  opacity: 0;
+  pointer-events: none;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.hero { max-width:900px;text-align:center;padding:64px 28px;border-radius:18px; }
+h1 { font-size:42px;margin:10px 0 14px; }
+.lead { font-size:16px;line-height:1.6;color:var(--muted);max-width:760px;margin:0 auto; }
+.scroll-arrow {
+  user-select:none;
+  position:fixed;
+  left:50%;transform:translateX(-50%);
+  bottom:28px;
+  z-index:40;
+  display:grid;
+  place-items:center;
+  width:64px;
+  height:64px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(8px);
+  transition:opacity .45s,transform .45s;
+  opacity:1;
+}
+.light .scroll-arrow {
+  background:rgba(0,0,0,0.05);
+  border:1px solid rgba(0,0,0,0.1);
+}
+.scroll-arrow.hidden { opacity:0;transform:translateX(-50%) translateY(24px);pointer-events:none; }
+.tiles {
+  width:100%;
+  max-width:920px;
+  margin:48px auto 24px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:16px;
+}
+.tile {
+  background:var(--card);
+  border-radius:12px;
+  padding:20px;
+  border:1px solid var(--border);
+  font-family:'Space Grotesk',sans-serif;
+  transition:transform .3s ease, box-shadow .3s ease, background .3s ease;
+  cursor: pointer;
+}
+.tile:hover {
+  transform:translateY(-6px);
+  box-shadow:0 6px 20px rgba(255,255,255,0.08);
+}
+.tile h3 { margin:0 0 8px;font-size:16px;text-align:left; }
+.tile p { margin:0;font-size:13px;color:var(--muted);text-align:left; }
+.footer {
+  width:100%;
+  max-width:920px;
+  margin:40px auto 0;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-size:13px;
+  color:var(--muted);
+  padding:20px 0;
+  border-top:1px solid var(--border);
+}
+.footer a {
+  position:relative;
+  color:rgba(255,255,255,0.85);
+  text-decoration:none;
+  transition:color .3s ease;
+}
+.light .footer a { color:rgba(0,0,0,0.8); }
+.footer a::after {
+  content:'';
+  position:absolute;
+  left:0;bottom:-2px;
+  width:0;
+  height:1px;
+  background:currentColor;
+  transition:width .3s ease;
+}
+.footer a:hover::after {
+  width:100%;
+}
+.footer span.dot {
+  width:4px;height:4px;background:var(--muted);
+  border-radius:50%;display:inline-block;
+}
+.inline { display:inline-flex;align-items:center;gap:6px; }
+.heart { width:14px;height:14px;display:inline-block; }
+
+.main-content-wrapper {
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+#articleView {
+  display: none;
+  width: 100%;
+  min-height: calc(100vh - 88px);
+  padding: 80px 20px 48px;
+  transition: opacity .3s;
+}
+#articleContent {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 30px;
+  width: 100%;
+}
+#mainArticle {
+  padding-right: 20px;
+  min-width: 0;
+}
+#articleView h2 {
+  font-size: 38px;
+  margin-top: 0;
+  margin-bottom: 25px;
+}
+#articleView p {
+  line-height: 1.7;
+  margin-bottom: 1.5em;
+  color: var(--text);
+}
+#articleView h3 {
+  font-size: 26px;
+  margin-top: 35px;
+  margin-bottom: 15px;
+  color: var(--accent);
+}
+#sidePanel {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+  width: 100%;
+  padding: 15px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+#sidePanel h4 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+#sidePanel ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#sidePanel ul li a {
+  display: block;
+  padding: 6px 0;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .2s;
+}
+#sidePanel ul li a:hover {
+  color: var(--text);
+}
+@media (max-width: 960px) {
+  #articleContent {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  #mainArticle {
+    padding-right: 0;
+  }
+  #sidePanel { 
+    display: none; 
+  }
+}
+@media (max-width:540px){ h1{font-size:28px;margin-top:6px} }
+</style>
+</head>
+<body>
+<div class="header" id="mainHeader"><img id="logo" src="C:/Users/Admin/Desktop/fair/logo.svg" alt="logo"></div>
+<div class="home-toggle" id="homeToggle">
+  <div class="button-wrap">
+    <button class="theme-btn" id="homeBtn"><span class="material-symbols-outlined">home</span></button>
+    <div class="button-shadow"></div>
+  </div>
+</div>
+<div class="theme-toggle">
+  <div class="button-wrap">
+    <button class="theme-btn" id="themeBtn"><span class="material-symbols-outlined" id="themeIcon">dark_mode</span></button>
+    <div class="button-shadow"></div>
+  </div>
+</div>
+<main class="container" id="mainContainer">
+  <section class="hero">
+    <h1>Fair Play Initiative</h1>
+    <p class="lead">Fair Play is a player-led initiative pushing for honesty, accountability, and respect in gaming. The goal is to hold companies responsible for broken launches, exploitative monetization, and misleading marketing, while highlighting studios that treat players fairly. We aim to give players a voice.</p>
+  </section>
+  <section class="tiles" id="tilesSection">
+    <div class="tile" data-article-id="about"><h3>About</h3><p>About Fair Play</p></div>
+    <div class="tile" data-article-id="help"><h3>How to Help</h3><p>How to help the Fair Play Initiative</p></div>
+    <div class="tile" data-article-id="demands"><h3>Demands</h3><p>What we expect from gaming companies</p></div>
+    <div class="tile" data-article-id="updates"><h3>Updates</h3><p>Company responses and progress reports</p></div>
+    <div class="tile" data-article-id="tipline"><h3>Tipline</h3><p>Report unfair practices or broken promises</p></div>
+    <div class="tile" data-article-id="support"><h3>Support Indie</h3><p>Indie studios and projects we want to highlight</p></div>
+    <div class="tile" data-article-id="stats"><h3>Stats</h3><p>Interesting statistics on our progress</p></div>
+    <div class="tile" data-article-id="contact"><h3>Contact</h3><p>Links, socials, and how to reach the team</p></div>
+  </section>
+</main>
+<div id="articleView">
+  <div class="main-content-wrapper">
+    <div id="articleContent">
+      <div id="mainArticle"></div>
+      <div id="sidePanel"></div>
+    </div>
+  </div>
+</div>
+<div class="scroll-arrow" id="scrollArrow">
+  <span class="material-symbols-outlined" style="color:var(--text);font-size:48px;">keyboard_arrow_down</span>
+</div>
+<footer class="footer">
+  <div class="inline">Made by <a href="https://mesmerica.is-a.dev">Luci</a> with <img class="heart" src="https://raw.githubusercontent.com/twitter/twemoji/gh-pages/svg/2764.svg" alt="heart"></div>
+  <span class="dot"></span>
+  <a href="https://7eyes.dev">Subdomain kindly provided by 7eyes.dev</a>
+  <span class="dot"></span>
+<a href="https://example.com/coffee" onclick="return false;" style="pointer-events: none; color: gray; text-decoration: none; cursor: default;">Buy me a Coffee (disabled temporarily)</a>
+  <span class="dot"></span>
+  <a href="https://discord.gg/UvMx66paze">Join our Discord</a>
+</footer>
+<script>
+(function(){
+  const root=document.documentElement;
+  const themeBtn=document.getElementById('themeBtn');
+  const themeIcon=document.getElementById('themeIcon');
+  const arrow=document.getElementById('scrollArrow');
+  const mainHeader = document.getElementById('mainHeader');
+  const mainContainer = document.getElementById('mainContainer');
+  const tilesSection = document.getElementById('tilesSection');
+  const articleView = document.getElementById('articleView');
+  const homeToggle = document.getElementById('homeToggle');
+  const homeBtn = document.getElementById('homeBtn');
+  const mainArticle = document.getElementById('mainArticle');
+  const sidePanel = document.getElementById('sidePanel');
+  let prev=window.pageYOffset||0,hidden=false;
+
+const articleData = {
+  about: {
+    title: "About the Fair Play Initiative",
+    sections: {
+      'Info': 'Site isn\'t up yet. We need data before adding full content here. Help us by going to:',
+      'Forms Link': '<a href="https://forms.gle/S1hkUsR7D6btWyfE9" target="_blank">Click me</a>',
+      'Discord Link': '<a href="https://discord.gg/UvMx66paze" target="_blank">Click me</a>'
+    }
+  },
+  help: {
+    title: "How You Can Help the Initiative",
+    sections: {
+      'Info': 'Site isn\'t up yet. We need data before adding full content here. Help us by going to:',
+      'Forms Link': '<a href="https://forms.gle/S1hkUsR7D6btWyfE9" target="_blank">Click me</a>',
+      'Discord Link': '<a href="https://discord.gg/UvMx66paze" target="_blank">Click me</a>'
+    }
+  },
+  demands: {
+    title: "Our Core Demands from Gaming Companies",
+    sections: {
+      'Info': 'Site isn\'t up yet. We need data before adding full content here. Help us by going to:',
+      'Forms Link': '<a href="https://forms.gle/S1hkUsR7D6btWyfE9" target="_blank">Click me</a>',
+      'Discord Link': '<a href="https://discord.gg/UvMx66paze" target="_blank">Click me</a>'
+    }
+  },
+  updates: {
+    title: "Company Responses and Progress Reports",
+    sections: {
+      'Info': 'Site isn\'t up yet. We need data before adding full content here. Help us by going to:',
+      'Forms Link': '<a href="https://forms.gle/S1hkUsR7D6btWyfE9" target="_blank">Click me</a>',
+      'Discord Link': '<a href="https://discord.gg/UvMx66paze" target="_blank">Click me</a>'
+    }
+  },
+  tipline: {
+    title: "The Fair Play Tipline: Report Issues",
+    sections: {
+      'Info': 'Site isn\'t up yet. We need data before adding full content here. Help us by going to:',
+      'Forms Link': '<a href="https://forms.gle/S1hkUsR7D6btWyfE9" target="_blank">Click me</a>',
+      'Discord Link': '<a href="https://discord.gg/UvMx66paze" target="_blank">Click me</a>'
+    }
+  },
+  support: {
+    title: "Supporting Indie Studios and Fair Developers",
+    sections: {
+      'Info': 'Site isn\'t up yet. We need data before adding full content here. Help us by going to:',
+      'Forms Link': '<a href="https://forms.gle/S1hkUsR7D6btWyfE9" target="_blank">Click me</a>',
+      'Discord Link': '<a href="https://discord.gg/UvMx66paze" target="_blank">Click me</a>'
+    }
+  },
+  stats: {
+    title: "Interesting Statistics on Our Progress",
+    sections: {
+      'Info': 'Site isn\'t up yet. We need data before adding full content here. Help us by going to:',
+      'Forms Link': '<a href="https://forms.gle/S1hkUsR7D6btWyfE9" target="_blank">Click me</a>',
+      'Discord Link': '<a href="https://discord.gg/UvMx66paze" target="_blank">Click me</a>'
+    }
+  },
+  contact: {
+    title: "Contact, Links, and Socials",
+    sections: {
+      'Info': 'Site isn\'t up yet. We need data before adding full content here. Help us by going to:',
+
+      'Forms Link': '<a href="https://forms.gle/S1hkUsR7D6btWyfE9" target="_blank">Click me</a>',
+      'Discord Link': '<a href="https://discord.gg/UvMx66paze" target="_blank">Click me</a>',
+      'Email': 'woxel.gg@gmail.com',
+      'Discord': '@solaenum',
+    }
+  }
+};
+
+
+  function applyTheme(t){
+    if(t==='light'){
+      root.classList.add('light');
+      themeIcon.textContent='light_mode';
+      localStorage.setItem('fp-theme','light');
+    } else {
+      root.classList.remove('light');
+      themeIcon.textContent='dark_mode';
+      localStorage.setItem('fp-theme','dark');
+    }
+  }
+
+function showHomepage() {
+    mainContainer.style.display = 'flex';
+    articleView.style.display = 'none';
+    mainHeader.classList.remove('hidden-content');
+    arrow.classList.remove('hidden');
+    homeToggle.classList.remove('visible');
+    history.replaceState(null, null, window.location.pathname + window.location.search);
+    window.scrollTo(0, 0);
+  }
+
+  function showArticle(articleId) {
+    const data = articleData[articleId];
+    if (!data) return;
+
+    mainContainer.style.display = 'none';
+    mainHeader.classList.add('hidden-content');
+    arrow.classList.add('hidden');
+    
+    let articleHTML = `<h2>${data.title}</h2>`;
+    let panelHTML = '<h4>In this article</h4><ul>';
+    
+    for (const sectionTitle in data.sections) {
+      const slug = sectionTitle.toLowerCase().replace(/\s/g, '-');
+      articleHTML += `<h3 id="${slug}">${sectionTitle}</h3>`;
+      articleHTML += `<p>${data.sections[sectionTitle]}</p>`;
+      
+      panelHTML += `<li><a href="#${slug}">${sectionTitle}</a></li>`;
+    }
+    panelHTML += '</ul>';
+
+    mainArticle.innerHTML = articleHTML;
+    sidePanel.innerHTML = panelHTML;
+    
+    articleView.style.display = 'block';
+    homeToggle.classList.add('visible');
+    window.scrollTo(0, 0);
+  }
+
+  applyTheme(localStorage.getItem('fp-theme')||'dark');
+
+  themeBtn.addEventListener('click',()=>{
+    const next=root.classList.contains('light')?'dark':'light';
+    themeBtn.animate([
+      {transform:'rotateY(0deg) scale(1)'},
+      {transform:'rotateY(180deg) scale(0.9)'},
+      {transform:'rotateY(360deg) scale(1)'}
+    ],{duration:600,easing:'ease-in-out'});
+    applyTheme(next);
+  });
+  
+  homeBtn.addEventListener('click', showHomepage);
+
+  tilesSection.addEventListener('click', (e) => {
+    const tile = e.target.closest('.tile');
+    if (tile && tile.dataset.articleId) {
+      showArticle(tile.dataset.articleId);
+    }
+  });
+
+  window.addEventListener('scroll',()=>{
+    const y=window.pageYOffset||0;
+    if(mainContainer.style.display !== 'none'){
+      if(y>prev+10){if(!hidden){arrow.classList.add('hidden');hidden=true;}}
+      else if(y<prev-10){if(hidden){arrow.classList.remove('hidden');hidden=false;}}
+      prev=y;
+    }
+  },{passive:true});
+})();
+</script>
+</body>
+</html
